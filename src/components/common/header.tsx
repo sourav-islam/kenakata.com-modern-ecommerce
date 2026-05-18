@@ -1,8 +1,36 @@
+"use client"; 
 import Link from 'next/link';
 import { ShoppingCart, User, Search, Sun, Moon } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
-
+import { useRouter } from "next/navigation";
+import { useState, FormEvent } from "react";
 export function Header() {
+  // Header function er modhye:
+const router = useRouter();
+const [searchValue, setSearchValue] = useState("");
+
+const handleSearch = (e: FormEvent) => {
+  e.preventDefault();
+  if (searchValue.trim()) {
+    router.push(`/products?title=${encodeURIComponent(searchValue.trim())}`);
+  }
+};
+
+// Input form:
+<form onSubmit={handleSearch} className="relative hidden sm:block">
+  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+  <input
+    type="search"
+    placeholder="Search products..."
+    value={searchValue}
+    onChange={(e) => setSearchValue(e.target.value)}
+    className="h-10 w-full rounded-md border border-input bg-background
+      px-9 py-2 text-sm ring-offset-background
+      placeholder:text-muted-foreground focus-visible:outline-none
+      focus-visible:ring-2 focus-visible:ring-ring
+      focus-visible:ring-offset-2 md:w-[200px] lg:w-[300px]"
+  />
+</form>
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
@@ -43,6 +71,8 @@ export function Header() {
           </Link>
         </div>
       </div>
+
+      
     </header>
   );
 }
