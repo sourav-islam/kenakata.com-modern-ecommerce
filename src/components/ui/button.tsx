@@ -1,27 +1,36 @@
-// src/components/ui/button.tsx
+// src/components/ui/button.tsx — update koro
+
 import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/utils";
+
+// Install koro
+// npm install @radix-ui/react-slot
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "default" | "secondary" | "outline" | "ghost" | "destructive";
-  size?: "sm" | "md" | "lg" | "icon";
-  loading?: boolean;
+  variant?:  "default" | "secondary" | "outline" | "ghost" | "destructive";
+  size?:     "sm" | "md" | "lg" | "icon";
+  loading?:  boolean;
+  asChild?:  boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       className,
-      variant = "default",
-      size = "md",
-      loading = false,
+      variant  = "default",
+      size     = "md",
+      loading  = false,
+      asChild  = false,
       disabled,
       children,
       ...props
     },
     ref
   ) => {
+    const Comp = asChild ? Slot : "button";
+
     const base = cn(
       "inline-flex items-center justify-center gap-2 whitespace-nowrap",
       "rounded-md text-sm font-medium transition-colors",
@@ -51,6 +60,18 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       icon: "h-10 w-10",
     };
 
+    if (asChild) {
+      return (
+        <Slot
+          ref={ref}
+          className={cn(base, variants[variant], sizes[size], className)}
+          {...props}
+        >
+          {children}
+        </Slot>
+      );
+    }
+
     return (
       <button
         ref={ref}
@@ -59,11 +80,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {loading && (
-          <svg
-            className="h-4 w-4 animate-spin"
-            viewBox="0 0 24 24"
-            fill="none"
-          >
+          <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
             <circle
               className="opacity-25"
               cx="12" cy="12" r="10"
