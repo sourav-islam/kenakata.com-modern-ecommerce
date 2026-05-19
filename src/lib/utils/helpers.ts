@@ -41,7 +41,11 @@ function cleanImageUrl(url: string): string {
 
   // Valid URL check
   try {
-    new URL(cleaned);
+    const parsed = new URL(cleaned);
+    const blockedHosts = new Set(["placeimg.com"]);
+    if (blockedHosts.has(parsed.hostname.toLowerCase())) {
+      return "https://placehold.co/400x400/f1f5f9/64748b?text=No+Image";
+    }
     return cleaned;
   } catch {
     return "https://placehold.co/400x400/f1f5f9/64748b?text=No+Image";

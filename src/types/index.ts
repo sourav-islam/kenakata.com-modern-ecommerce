@@ -70,3 +70,39 @@ export interface Cart {
   shipping:  number;
   tax:       number;
 }
+
+export interface OrderItem {
+  product:  Product;
+  quantity: number;
+  price:    number;
+}
+
+export interface Order {
+  id:          string;
+  items:       OrderItem[];
+  total:       number;
+  shipping:    number;
+  tax:         number;
+  status:      "processing" | "shipped" | "delivered" | "cancelled";
+  createdAt:   string;
+  deliveredAt?: string;
+  address: {
+    firstName: string;
+    lastName:  string;
+    address:   string;
+    city:      string;
+    state:     string;
+    zipCode:   string;
+    country:   string;
+  };
+}
+
+export interface OrderDetails {
+  orderId:   string;
+  items:     CartItem[];
+  total:     number;
+  shipping:  number;
+  tax:       number;
+  formData:  import("@/lib/validations/checkout").CheckoutFormData;
+  createdAt: string;
+}
