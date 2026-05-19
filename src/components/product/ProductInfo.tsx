@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice, generateRating } from "@/lib/utils/helpers";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/store/AuthContext";
+import { useRouter } from "next/navigation";
 
 interface ProductInfoProps {
   product: Product;
@@ -20,6 +22,8 @@ export function ProductInfo({ product }: ProductInfoProps) {
   const [quantity,    setQuantity]    = useState(1);
   const [added,       setAdded]       = useState(false);
   const [wishlisted,  setWishlisted]  = useState(false);
+  const { isLoggedIn } = useAuth();
+  const router = useRouter();
 
   const rating    = generateRating(product.id);
   const reviewCount = (product.id * 7) % 200 + 15; // deterministic fake count
@@ -30,6 +34,10 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
   // Add to cart handler — Response 6 e CartContext e connect korbo
   const handleAddToCart = () => {
+    if (!isLoggedIn) {
+      router.push(`/login?redirect=${window.location.pathname}`);
+      return;
+    }
     // TODO: dispatch to CartContext
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
@@ -54,7 +62,13 @@ export function ProductInfo({ product }: ProductInfoProps) {
         </Badge>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setWishlisted((w) => !w)}
+            onClick={() => {
+              if (!isLoggedIn) {
+                router.push(`/login?redirect=${window.location.pathname}`);
+                return;
+              }
+              setWishlisted((w) => !w);
+            }}
             className={cn(
               "rounded-full p-2 transition-colors hover:bg-muted",
               wishlisted && "text-red-500"

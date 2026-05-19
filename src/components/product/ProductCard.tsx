@@ -8,6 +8,8 @@ import { Product } from "@/types";
 import { formatPrice, getSafeImageUrl, generateRating } from "@/lib/utils/helpers";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/store/AuthContext";
+import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
   product: Product;
@@ -17,6 +19,18 @@ interface ProductCardProps {
 export function ProductCard({ product, className }: ProductCardProps) {
   const imageUrl = getSafeImageUrl(product.images);
   const rating   = generateRating(product.id);
+  const { isLoggedIn } = useAuth();
+  const router = useRouter();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault(); // Link click prevent koro
+    if (!isLoggedIn) {
+      router.push(`/login?redirect=${window.location.pathname}`);
+      return;
+    }
+    // TODO: Add to cart logic
+    console.log("Adding to cart:", product.title);
+  };
 
   return (
     <div
@@ -70,6 +84,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
             {formatPrice(product.price)}
           </span>
           <button
+            onClick={handleAddToCart}
             className={cn(
               "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5",
               "bg-primary text-primary-foreground text-xs font-medium",
