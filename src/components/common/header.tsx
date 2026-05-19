@@ -1,23 +1,25 @@
 // src/components/common/header.tsx
 "use client";
 
-import Link           from "next/link";
+import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { useState, FormEvent }    from "react";
+import { useState, FormEvent } from "react";
 import {
   ShoppingCart, User, Search,
   LogOut, Package, ChevronDown,
 } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
-import { useAuth }     from "@/lib/store/AuthContext";
-import { cn }          from "@/lib/utils";
+import { useAuth } from "@/lib/store/AuthContext";
+import { cn } from "@/lib/utils";
+import { useCart } from "@/lib/store/CartContext";
 
 export function Header() {
-  const router   = useRouter();
+  const router = useRouter();
   const pathname = usePathname();
   const { isLoggedIn, user, logout, isLoading } = useAuth();
+  const { cart } = useCart();
 
-  const [searchValue,  setSearchValue]  = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -30,7 +32,7 @@ export function Header() {
   };
 
   const navLinks = [
-    { href: "/products",  label: "Products"   },
+    { href: "/products", label: "Products" },
     { href: "/categories", label: "Categories" },
   ];
 
@@ -92,13 +94,14 @@ export function Header() {
           <Link
             href="/cart"
             className="relative rounded-md p-2 hover:bg-accent transition-colors"
-            aria-label="Cart"
+            aria-label={`Cart (${cart.itemCount} items)`}
           >
             <ShoppingCart className="h-5 w-5" />
-            {/* Response 6 e dynamic count */}
-            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-              0
-            </span>
+            {cart.itemCount > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                {cart.itemCount > 99 ? "99+" : cart.itemCount}
+              </span>
+            )}
           </Link>
 
           {/* User Menu */}

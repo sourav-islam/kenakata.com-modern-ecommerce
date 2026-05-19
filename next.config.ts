@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "i.imgur.com"         },
       { protocol: "https", hostname: "opensource-demo.orangehrmlive.com" },
       { protocol: "https", hostname :"picsum.photos"  },
-      { protocol: "http",  hostname: "**"                  },
+      { protocol: "https",  hostname: "**"                  },
     ],
   },
 };

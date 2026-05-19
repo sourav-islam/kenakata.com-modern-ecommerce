@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatPrice, generateRating } from "@/lib/utils/helpers";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/store/AuthContext";
+import { useCart } from "@/lib/store/CartContext"; // CartContext ইমপোর্ট করা হলো
 import { useRouter } from "next/navigation";
 
 interface ProductInfoProps {
@@ -22,9 +23,12 @@ export function ProductInfo({ product }: ProductInfoProps) {
   const [quantity,    setQuantity]    = useState(1);
   const [added,       setAdded]       = useState(false);
   const [wishlisted,  setWishlisted]  = useState(false);
+  
   const { isLoggedIn } = useAuth();
+  const { addItem, isInCart } = useCart(); // CartContext থেকে মেথড নেওয়া হলো
   const router = useRouter();
 
+  const alreadyInCart = isInCart(product.id); // প্রোডাক্টটি অলরেডি কার্টে আছে কি না চেক
   const rating    = generateRating(product.id);
   const reviewCount = (product.id * 7) % 200 + 15; // deterministic fake count
 
@@ -32,15 +36,25 @@ export function ProductInfo({ product }: ProductInfoProps) {
   const decrease = () => setQuantity((q) => Math.max(1, q - 1));
   const increase = () => setQuantity((q) => Math.min(99, q + 1));
 
-  // Add to cart handler — Response 6 e CartContext e connect korbo
+  // Add to cart handler updated
   const handleAddToCart = () => {
     if (!isLoggedIn) {
       router.push(`/login?redirect=${window.location.pathname}`);
       return;
     }
-    // TODO: dispatch to CartContext
+    addItem(product, quantity); // কার্টে প্রোডাক্ট ও কোয়ান্টিটি যোগ করা হলো
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
+  };
+
+  // Buy Now handler added
+  const handleBuyNow = () => {
+    if (!isLoggedIn) {
+      router.push(`/login?redirect=${window.location.pathname}`);
+      return;
+    }
+    addItem(product, quantity); // কার্টে প্রোডাক্ট যোগ করে সরাসরি কার্ট পেজে নিয়ে যাবে
+    router.push("/cart");
   };
 
   // Share handler
@@ -168,7 +182,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
         </span>
       </div>
 
-      {/* ── Add to Cart Button ─────────────────── */}
+      {/* ── Add to Cart & Buy Now Buttons (Updated) ── */}
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button
           size="lg"
@@ -180,6 +194,11 @@ export function ProductInfo({ product }: ProductInfoProps) {
               <Check className="mr-2 h-5 w-5" />
               Added to Cart!
             </>
+          ) : alreadyInCart ? (
+            <>
+              <ShoppingCart className="mr-2 h-5 w-5" />
+              Add More
+            </>
           ) : (
             <>
               <ShoppingCart className="mr-2 h-5 w-5" />
@@ -187,14 +206,12 @@ export function ProductInfo({ product }: ProductInfoProps) {
             </>
           )}
         </Button>
+        
         <Button
           size="lg"
           variant="outline"
           className="flex-1"
-          onClick={() => {
-            handleAddToCart();
-            // Response 6 e checkout redirect korbo
-          }}
+          onClick={handleBuyNow}
         >
           Buy Now
         </Button>

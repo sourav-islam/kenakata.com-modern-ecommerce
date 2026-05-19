@@ -1,9 +1,10 @@
-// src/app/layout.tsx — update koro
+// src/app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { AuthProvider }  from "@/lib/store/AuthContext";
+import { CartProvider }  from "@/lib/store/CartContext";
 import { Header }        from "@/components/common/header";
 import { Footer }        from "@/components/common/footer";
 
@@ -39,11 +40,13 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <div className="relative flex min-h-screen flex-col">
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
+            <CartProvider>
+              <div className="relative flex min-h-screen flex-col">
+                <Header />
+                <main className="flex-1">{children}</main>
+                <Footer />
+              </div>
+            </CartProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

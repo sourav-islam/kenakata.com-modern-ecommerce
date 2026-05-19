@@ -62,3 +62,11 @@ export interface ProductFilters {
   sortBy?: "price" | "title" | "id";
   sortOrder?: "asc" | "desc";
 }
+export interface Cart {
+  items:     CartItem[];
+  total:     number;
+  itemCount: number;
+  subtotal:  number;
+  shipping:  number;
+  tax:       number;
+}
