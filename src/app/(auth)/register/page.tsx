@@ -1,12 +1,26 @@
 // src/app/(auth)/register/page.tsx
 import type { Metadata } from "next";
-import { RegisterForm } from "@/components/auth/RegisterForm";
-import Link from "next/link";
+import { Suspense }      from "react";
+import Link              from "next/link";
+import { RegisterForm }  from "@/components/auth/RegisterForm";
+import { Skeleton }      from "@/components/ui/skeleton";
 
 export const metadata: Metadata = {
   title:       "Register",
   description: "Create your KenaKata account",
 };
+
+function RegisterFormFallback() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-11 w-full" />
+    </div>
+  );
+}
 
 export default function RegisterPage() {
   return (
@@ -23,7 +37,10 @@ export default function RegisterPage() {
 
       {/* Form card */}
       <div className="rounded-xl border bg-background p-6 shadow-sm">
-        <RegisterForm />
+        {/* ✅ Suspense wrap */}
+        <Suspense fallback={<RegisterFormFallback />}>
+          <RegisterForm />
+        </Suspense>
       </div>
 
       {/* Login link */}
